@@ -7,13 +7,12 @@
 echo "Please enter the assignmnet number: "
 echo "Please enter the name of header file{ex)LinkedList.h} :"
 
-# get an input when implement the sh file. ex) sh grade.sh ./home/ ..
-testcase_main="/home/2018f-DS/assignment#$1/testcase/main/"
-testcase_output="/home/2018f-DS/assignment#$1/testcase/output/"
-student_ID=/home/2018f-DS/TA/studentID_for_grading.txt
-uniFolder="/home/2018f-DS/assignment#$1/submit/"
-taFolder="/home/2018f-DS/TA"
-ResultFolder="/home/2018f-DS/assignment#$1/result/"
+testcase_main="/home/"
+testcase_output="/home/"
+student_ID=/home/=studentID.txt
+studentFolder="/home/"
+taFolder="/home/"
+ResultFolder="/home/"
 
 #the array of main files and output files In this form, there are 17 mains for scoring the cases and 2 mains for scoring the memory leak.
 main_arr=("main1.cpp" "main2.cpp" "main3.cpp" "main4.cpp" "main5.cpp" "main6.cpp" "main7.cpp" "main8.cpp" "main9.cpp" "main10.cpp" "main11.cpp" "main12.cpp" "main13.cpp" "main14.cpp" "main15.cpp" "main16.cpp" "main17.cpp" "main18.cpp" "main19.cpp")
@@ -47,7 +46,7 @@ do
 	echo -n "$line">>result$(date +%m%d).csv
 
 	#check if header file can be compiled or not
-	if g++ $uniFolder/uni$line/assignment\#$1/$2 ;
+	if g++ $studentFolder/$line/assignment\#$1/$2 ;
         then
 		#give 5 points if it compiled
                 echo -n ",5">>result$(date +%m%d).csv
@@ -64,10 +63,10 @@ do
 		
 		cd $testcase_main
 		#compile header file with main file and if there is compile error, save it in the student's dir as name of "compile_err.txt"		
-		g++ -I $uniFolder/uni$line/assignment\#$1/ ${main_arr[$i]}
+		g++ -I $studentFolder/$line/assignment\#$1/ ${main_arr[$i]}
  
 		#save the student's output file in the student's dir as name of main+i()
-		timeout 5s ./a.out > $uniFolder/uni$line/assignment\#$1/${main_arr[$i]%.*}
+		timeout 5s ./a.out > $studentFolder/$line/assignment\#$1/${main_arr[$i]%.*}
 		
 		#this if statement is for grading memory leak. So it only works when i is 17 or 18.
 		if [ $i -eq 17 -o $i -eq 18 ]
@@ -104,7 +103,7 @@ do
 			cd $taFolder
 
 			#diff student's output file with our correct output file	
-			result=$? $(cmp $testcase_output${output_arr[$i]} $uniFolder/uni$line/assignment\#$1/${main_arr[$i]%.*} > /dev/null)
+			result=$? $(cmp $testcase_output${output_arr[$i]} $studentFolder/$line/assignment\#$1/${main_arr[$i]%.*} > /dev/null)
 			if [ $result -eq 0 ]
 			then
 				#if correct give 5 points
@@ -119,10 +118,12 @@ do
 	#we can see the grading result from the result.csv
 	echo -n ",$total">>result$(date +%m%d).csv
 	echo -n ",">>result$(date +%m%d).csv
-	cd $uniFolder/uni$line/
+	
+	#get a commision date of students 
+	cd $studentFolder/$line/
 	git show --quiet --date=format-local:%m-%d --format="%cd" > date.txt
 	cd $taFolder
-	cat $uniFolder/uni$line/date.txt >> result$(date +%m%d).csv
+	cat $studentFolder/$line/date.txt >> result$(date +%m%d).csv
 done <$student_ID
 
 mv ./result$(date +%m%d).csv $ResultFolder/result$(date +%m%d).csv
