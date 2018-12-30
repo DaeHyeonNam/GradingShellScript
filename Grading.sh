@@ -9,7 +9,7 @@ echo "Please enter the name of header file{ex)LinkedList.h} :"
 
 testcase_main="/home/"
 testcase_output="/home/"
-student_ID=/home/=studentID.txt
+student_ID=/home/studentID.txt
 studentFolder="/home/"
 taFolder="/home/"
 ResultFolder="/home/"
